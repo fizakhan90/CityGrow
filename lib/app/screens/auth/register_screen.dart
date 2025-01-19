@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         emailController.text.trim(),
         passwordController.text.trim(),
       );
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/main');
     } catch (e) {
       String errorMessage = e.toString();
       // Add specific error handling for existing email

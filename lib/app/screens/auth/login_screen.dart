@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
         emailController.text.trim(),
         passwordController.text.trim(),
       );
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/main');
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.contains('user-not-found') || errorMessage.contains('no user record')) {
