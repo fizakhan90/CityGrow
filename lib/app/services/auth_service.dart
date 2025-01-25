@@ -8,6 +8,13 @@ class AuthService {
     try {
       UserCredential result =
           await _auth.signInWithEmailAndPassword(email: email, password: password);
+         FirebaseAuth.instance.currentUser?.getIdToken().then((token) {
+  print("========== ID Token ==========");
+  print(token);
+  print("========== END ==========");
+});
+
+
       return result.user;
     } catch (e) {
       throw e.toString();
