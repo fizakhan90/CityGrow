@@ -18,8 +18,8 @@ app.get("/", verifyToken, async (req, res) => {
     const user = await admin.auth().getUser(req.user.uid);
     res.json({
       uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || "Anonymous",
+      email: user.email
+      
     });
   } catch (error) {
     res.status(500).json({ error: "Error fetching user data" });
