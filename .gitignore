@@ -47,4 +47,4 @@ app.*.map.json
 
 firebase.json
 firebase_options.dart
-/backend/city-grow-firebase-adminsdk-fbsvc-32647e9df3.json
+backend/city-grow-firebase-adminsdk-fbsvc-32647e9df3.json
