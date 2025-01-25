@@ -1,7 +1,101 @@
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  
+  String _name = 'Jane Gardener';
+  String _bio = 'Urban Gardening Enthusiast';
+
+  
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+
+  
+  void _logout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Logout'),
+              onPressed: () {
+               
+                Navigator.of(context).pushReplacementNamed('/login');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  
+  void _editProfile() {
+    
+    _nameController.text = _name;
+    _bioController.text = _bio;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: 20,
+            left: 20,
+            right: 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _bioController,
+                decoration: const InputDecoration(
+                  labelText: 'Bio',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _name = _nameController.text;
+                    _bio = _bioController.text;
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Save Changes'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,10 +105,18 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Colors.green.shade50,
         actions: [
           IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: _editProfile,
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // Add settings navigation
+              
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
           ),
         ],
       ),
@@ -29,16 +131,16 @@ class ProfileScreen extends StatelessWidget {
               child: const Icon(Icons.person, size: 50, color: Colors.green),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Jane Gardener',
-              style: TextStyle(
+            Text(
+              _name,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Urban Gardening Enthusiast',
+              _bio,
               style: TextStyle(
                 color: Colors.grey.shade600,
                 fontSize: 16,

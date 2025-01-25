@@ -65,7 +65,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   ];
 
   void _showCreatePostDialog() {
-    final TextEditingController _contentController = TextEditingController();
+    final TextEditingController contentController = TextEditingController();
 
     showDialog(
       context: context,
@@ -75,7 +75,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: _contentController,
+              controller: contentController,
               maxLines: 4,
               decoration: const InputDecoration(
                 hintText: 'Share your gardening journey...',
@@ -99,13 +99,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              if (_contentController.text.isNotEmpty) {
+              if (contentController.text.isNotEmpty) {
                 setState(() {
                   _posts.insert(
                     0,
                     Post(
                       username: 'Me',
-                      content: _contentController.text,
+                      content: contentController.text,
                       likes: 0,
                       comments: [],
                       timeAgo: 'Just now',
@@ -123,7 +123,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   }
 
   void _showCommentsSheet(Post post) {
-    final TextEditingController _commentController = TextEditingController();
+    final TextEditingController commentController = TextEditingController();
 
     showModalBottomSheet(
       context: context,
@@ -162,7 +162,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: _commentController,
+                      controller: commentController,
                       decoration: const InputDecoration(
                         hintText: 'Add a comment...',
                         border: OutlineInputBorder(),
@@ -171,11 +171,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   ),
                   IconButton(
                     onPressed: () {
-                      if (_commentController.text.isNotEmpty) {
+                      if (commentController.text.isNotEmpty) {
                         setState(() {
-                          post.comments.add(_commentController.text);
+                          post.comments.add(commentController.text);
                         });
-                        _commentController.clear();
+                        commentController.clear();
                         Navigator.pop(context);
                       }
                     },
