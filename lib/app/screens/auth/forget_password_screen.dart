@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:citygrow/app/services/auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
   final AuthService authService = AuthService();
   bool isLoading = false;
-  bool _showPassword = false;
   String? emailError;
-  String? passwordError;
-  
+
   bool isValidEmail(String email) {
     final RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(email);
-  }
-
-  bool isValidPassword(String password) {
-    return password.length >= 6;
   }
 
   void validateEmail(String email) {
@@ -38,41 +31,38 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void validatePassword(String password) {
-    setState(() {
-      if (password.isEmpty) {
-        passwordError = 'Password is required';
-      } else if (!isValidPassword(password)) {
-        passwordError = 'Password must be at least 6 characters long';
-      } else {
-        passwordError = null;
-      }
-    });
-  }
-
-  void login() async {
-    
+  void resetPassword() async {
     validateEmail(emailController.text);
-    validatePassword(passwordController.text);
     
-    if (emailError != null || passwordError != null) {
+    if (emailError != null) {
       return;
     }
 
     setState(() => isLoading = true);
 
     try {
-      await authService.signIn(
-        emailController.text.trim(),
-        passwordController.text.trim(),
+      await authService.resetPassword(emailController.text.trim());
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle_outline, color: Colors.white),
+              SizedBox(width: 10),
+              Expanded(child: Text('Password reset link sent to your email.')),
+            ],
+          ),
+          backgroundColor: Colors.green.shade600,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
-      Navigator.pushReplacementNamed(context, '/main');
+
+      
+      Navigator.of(context).pop();
     } catch (e) {
       String errorMessage = e.toString();
-      if (errorMessage.contains('user-not-found') || errorMessage.contains('no user record')) {
-        errorMessage = "No account found with this email. Please register first.";
-      } else if (errorMessage.contains('wrong-password')) {
-        errorMessage = "Incorrect password. Please try again.";
+      if (errorMessage.contains('user-not-found')) {
+        errorMessage = "No account found with this email.";
       }
       
       ScaffoldMessenger.of(context).showSnackBar(
@@ -96,6 +86,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Reset Password'),
+        backgroundColor: Colors.green.shade50,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -115,20 +109,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.local_florist,
+                    Icons.lock_reset,
                     size: 80,
                     color: Theme.of(context).primaryColor,
                   ),
                   SizedBox(height: 20),
                   
                   Text(
-                    "Welcome to CityGrow",
+                    "Reset Your Password",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   SizedBox(height: 10),
                   Text(
-                    "Grow your own food, right in the city",
+                    "Enter your email to receive a password reset link",
                     style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 40),
 
@@ -144,43 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20),
 
-                  TextField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock_outlined),
-                      errorText: passwordError,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _showPassword ? Icons.visibility_off : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _showPassword = !_showPassword;
-                          });
-                        },
-                      ),
-                    ),
-                    obscureText: !_showPassword,
-                    onChanged: validatePassword,
-                  ),
-                  SizedBox(height: 12),
-
-                  Align(
-  alignment: Alignment.centerRight,
-  child: TextButton(
-    onPressed: () {
-      Navigator.pushNamed(context, '/forgot-password');
-    },
-    child: Text("Forgot Password?"),
-  ),
-),
-                  SizedBox(height: 20),
-
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: isLoading ? null : login,
+                      onPressed: isLoading ? null : resetPassword,
                       child: isLoading
                           ? SizedBox(
                               height: 20,
@@ -191,24 +153,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             )
                           : Text(
-                              "Login",
+                              "Send Reset Link",
                               style: TextStyle(fontSize: 16),
                             ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an account?"),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/register');
-                        },
-                        child: Text("Register"),
-                      ),
-                    ],
                   ),
                 ],
               ),
