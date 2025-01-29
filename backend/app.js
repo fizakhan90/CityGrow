@@ -1,9 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const admin = require("firebase-admin");
 const serviceAccount = require("./city-grow-firebase-adminsdk-fbsvc-bdd511aa52.json");
-
 const verifyToken = require("./middleware/decodeToken");
 const userFormRoute = require("./serviceRoutes/userFormRoute");
 
